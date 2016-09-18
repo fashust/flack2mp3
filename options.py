@@ -42,6 +42,7 @@ def parse_options():
     parser.add_option(
         *OPTIONS['delete'],
         dest='delete',
+        action='store_true',
         default=False,
         help='Delete source *.cue and *.flac files, Default = False'
     )

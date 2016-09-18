@@ -15,9 +15,9 @@ def run(source_dir, ffmpeg_bin, delete):
     main entry point for script
     :return:
     """
-    convert(source_dir, ffmpeg_bin)
+    running = convert(source_dir, ffmpeg_bin)
     if delete:
-        delete_original(source_dir)
+        delete_original(source_dir, running)
 
 
 if __name__ == '__main__':

@@ -3,9 +3,10 @@
     Created on 18.09.16 by fashust
 """
 import os
-import asyncio
 import shlex
+from time import sleep
 from subprocess import call
+from threading import Thread
 
 
 __author__ = 'fashust'
@@ -15,7 +16,7 @@ __email__ = 'fashust.nefor@gmail.com'
 EXTENTION = '.cue'
 
 
-def get_cue_file(source_dir):
+def get_file(source_dir, ext=EXTENTION):
     """
     find cue file in source dir
     :param source_dir:
@@ -23,7 +24,7 @@ def get_cue_file(source_dir):
     :return:
     """
     for _file in os.listdir(source_dir):
-        if _file.endswith(EXTENTION):
+        if _file.endswith(ext):
             return os.path.abspath(os.path.join(source_dir, _file))
     msg = '*.cue file not found in directory "{}"'.format(source_dir)
     raise Exception(msg)
@@ -118,7 +119,7 @@ def generate_commands(cue_file, ffmpeg_bin):
     return commands
 
 
-async def run_command(command, source_dir):
+def run_command(command, source_dir):
     """
     excute convert command
     :param source_dir:
@@ -134,17 +135,31 @@ def convert(source_dir, ffmpeg_bin):
     """
     converter
     """
-    cue_file = get_cue_file(source_dir)
+    cue_file = get_file(source_dir)
     commands = generate_commands(cue_file, ffmpeg_bin)
-    loop = asyncio.get_event_loop()
+    running_commands = []
     for command in commands:
-        loop.run_until_complete(run_command(command, source_dir))
+        job = Thread(target=run_command, args=(command, source_dir))
+        job.start()
+        running_commands.append(job)
+    return running_commands
 
 
-def delete_original(source_dir):
+def delete_original(source_dir, running_commands, is_deleted=False):
     """
     delete original files
     :param source_dir:
     :return:
     """
-    pass
+    def is_all_finished():
+        return not all(map(lambda _: _.isAlive(), running_commands))
+
+    if not is_all_finished():
+        sleep(5)
+        delete_original(source_dir, running_commands, is_deleted)
+    elif is_deleted:
+        return
+    else:
+        for ext in [EXTENTION, '.flac']:
+            os.remove(get_file(source_dir, ext))
+        return
