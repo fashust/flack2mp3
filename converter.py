@@ -13,10 +13,10 @@ __author__ = 'fashust'
 __email__ = 'fashust.nefor@gmail.com'
 
 
-EXTENTION = '.cue'
+EXTENSION = '.cue'
 
 
-def get_file(source_dir, ext=EXTENTION):
+def get_file(source_dir, ext=EXTENSION):
     """
     find cue file in source dir
     :param source_dir:
@@ -160,6 +160,6 @@ def delete_original(source_dir, running_commands, is_deleted=False):
     elif is_deleted:
         return
     else:
-        for ext in [EXTENTION, '.flac']:
+        for ext in [EXTENSION, '.flac']:
             os.remove(get_file(source_dir, ext))
         return
