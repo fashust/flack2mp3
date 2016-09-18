@@ -2,7 +2,8 @@
 """
     Created on 17.09.16 by fashust
 """
-from optparse import OptionParser, OptionValueError
+import sys
+from optparse import OptionParser
 
 
 __author__ = 'fashust'
@@ -60,7 +61,10 @@ def check_options(options):
         val = getattr(options, key, None)
         if key != 'delete':
             if not val:
-                msg = 'Value for {} is required'.format(key)
-                raise OptionValueError(msg)
+                msg = (
+                    'Value for {} is required\n'
+                    'For more detail run "./main.py --help"'
+                ).format(key)
+                sys.exit(msg)
         opts[key] = val
     return opts
