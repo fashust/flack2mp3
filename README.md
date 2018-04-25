@@ -1,4 +1,4 @@
-# Convert flact to mp3
+# Convert flac to mp3
 
 It's dump simple converter from *.flac to *.mp3 using [ffmpeg](https://www.ffmpeg.org)
 
