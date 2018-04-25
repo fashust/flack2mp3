@@ -41,8 +41,8 @@ def generate_commands(cue_file, ffmpeg_bin):
     general = {}
     tracks = []
     commands = []
-    with open(cue_file) as _cue_file:
-        file_data = _cue_file.read().splitlines()
+    with open(cue_file, 'rb') as _cue_file:
+        file_data = _cue_file.read().decode('cp1251').splitlines()
         current_file = None
         for line in file_data:
             if line.startswith('REM GENRE '):
@@ -96,12 +96,12 @@ def generate_commands(cue_file, ffmpeg_bin):
                 metadata['date'] = track['date']
 
             cmd = ffmpeg_bin
-            cmd += ' -b:a 320k'
             cmd += ' -i "%s"' % current_file
             cmd += ' -ss %.2d:%.2d:%.2d' % (
                 track['start'] / 60 / 60, track['start'] / 60 % 60,
                 int(track['start'] % 60)
             )
+            cmd += ' -ab 320k'
 
             if 'duration' in track:
                 cmd += ' -t %.2d:%.2d:%.2d' % (
@@ -115,6 +115,7 @@ def generate_commands(cue_file, ffmpeg_bin):
             cmd += ' "%.2d - %s - %s.mp3"' % (
                 track['track'], track['artist'], track['title']
             )
+            cmd = cmd.replace('wav', 'ape')
             commands.append(cmd)
     return commands
 
